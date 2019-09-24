@@ -1,34 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class DistanceCalcurator : MonoBehaviour
 {
     public List<GameObject> foundObjects;
-    public GameObject enemy;
     public string tagName;
-    public float shortDis;
+    public GameObject enemy;
+    public float shortDistance;
+    public Text objText;
+    public Text distanceText;
 
 
     void Update()
     {
         foundObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag(tagName));
-        shortDis = Vector3.Distance(gameObject.transform.position, foundObjects[0].transform.position); // 첫번째를 기준으로 잡아주기 
+        shortDistance = Vector3.Distance(gameObject.transform.position, foundObjects[0].transform.position);
 
-        enemy = foundObjects[0]; // 첫번째를 먼저 
+        enemy = foundObjects[0]; 
 
         foreach (GameObject found in foundObjects)
         {
             float Distance = Vector3.Distance(gameObject.transform.position, found.transform.position);
 
-            if (Distance < shortDis) // 위에서 잡은 기준으로 거리 재기
+            if (Distance < shortDistance) 
             {
                 enemy = found;
-                shortDis = Distance;
+                shortDistance = Distance;
             }
         }
-        Debug.Log(enemy.name);
-        Debug.Log(shortDis);
+
+        objText.text = "가장 가까운 적 : " + enemy.name;
+        distanceText.text = "적과의 거리: " + shortDistance;
     }
 }
 
