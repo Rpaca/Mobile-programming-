@@ -5,18 +5,10 @@ using UnityEngine;
 public class Blocks : MonoBehaviour
 {
     private float lastTime = 0;
-    private float timeInterval = 1.5f;
+    private float timeInterval = 1.0f;
     private bool isActive = true;
-    private GameManager GM = GameObject.Find("GameManager").GetComponent<GameManager>();
 
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         drop();
@@ -41,43 +33,61 @@ public class Blocks : MonoBehaviour
 
     }
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "blocks")
-        {
-            print("crush");
-            GetComponent<Blocks>().enabled = false;
-        }
-    }
-
 
     //자유낙하
     private void drop()
     {
-        //바닥에 도착했는지 확인
-        if (transform.position.y == 0)
-        {
-            GM.isSpawning = false;
-            return;
-        }
+        var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
 
         if (Time.time - lastTime >= timeInterval)
         {
             transform.position += Vector3.down;
             lastTime = Time.time;
         }
+
+
+        //이동후 범위를 초과 확인
+        if (!StageManager.checkBlocks(transform))
+        {
+            //이동 범위를 초과했을 경우 이동 전으로 복구
+            transform.position += new Vector3(0, 1, 0);
+            //새로운 블럭 생성
+            GM.isSpawning = false;
+            this.enabled = false;
+        }
+
+        if (StageManager.checkeCollision(transform))
+        {
+            //이동 범위를 초과했을 경우 이동 전으로 복구
+            transform.position += new Vector3(0, 1, 0);
+            //새로운 블럭 생성
+            GM.isSpawning = false;
+            this.enabled = false;
+        }
+
+        StageManager.updtaeBlocksInfo(transform);
+
     }
+
 
     //좌우 이동
     private void horizontalMove(bool direction)
     {
-        //충돌했는지 확인
-
-        //아닐시
+        //입력에 따른 이동
         if(direction == true)
-            transform.position += Vector3.left;
+            transform.position += new Vector3(-1, 0, 0);
         else
-            transform.position += Vector3.right;
+            transform.position += new Vector3(1, 0, 0);
+
+        //이동후 범위를 초과 확인
+        if (StageManager.checkBlocks(transform))
+            return;
+
+        //이동 범위를 초과했을 경우 이동 전으로 복구
+        if (direction == true)
+            transform.position += new Vector3(1, 0, 0);
+        else
+            transform.position += new Vector3(-1, 0, 0);
     }       
 
 
@@ -85,6 +95,11 @@ public class Blocks : MonoBehaviour
     private void rotationalMove()
     {
         transform.Rotate(0, 0, -90);
+        //이동후 범위를 초과 확인
+        if (StageManager.checkBlocks(transform))
+            return;
+        //이동 범위를 초과했을 경우 이동 전으로 복구
+        transform.Rotate(0, 0, 90);
     }
 
     //스피드 업
@@ -101,4 +116,5 @@ public class Blocks : MonoBehaviour
         timeInterval = 0;
         isActive = false;
     }
+
 }

@@ -6,7 +6,7 @@ public class BlockSpawner : MonoBehaviour
 {
 
     public GameObject[] blockPrefabs;
-    private GameManager GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
+  
 
     // Use this for initialization
     void Start ()
@@ -17,12 +17,14 @@ public class BlockSpawner : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-       // if (GM.isSpawning == false)
+        var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
+        if (GM.isSpawning == false)
             spawn();		
 	}
 
     private void spawn()
     {
+        var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
         GameObject tempt;
         Vector3 pos = this.gameObject.transform.position;
         int i = Random.Range(0, blockPrefabs.Length);
