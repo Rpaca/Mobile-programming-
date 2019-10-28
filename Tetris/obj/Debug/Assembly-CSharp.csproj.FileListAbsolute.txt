@@ -166,3 +166,7 @@ C:\Users\Administrator\Documents\github\graduationPortfolio\Tetris\obj\Debug\Ass
 C:\Users\Administrator\Documents\github\graduationPortfolio\Tetris\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\Administrator\Documents\github\graduationPortfolio\Tetris\obj\Debug\Assembly-CSharp.dll
 C:\Users\Administrator\Documents\github\graduationPortfolio\Tetris\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Administrator\Documents\github\Mobile-programming-\Tetris\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\Users\Administrator\Documents\github\Mobile-programming-\Tetris\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\github\Mobile-programming-\Tetris\obj\Debug\Assembly-CSharp.dll
+C:\Users\Administrator\Documents\github\Mobile-programming-\Tetris\obj\Debug\Assembly-CSharp.pdb

@@ -7,7 +7,8 @@ public class Blocks : MonoBehaviour
     private float lastTime = 0;
     private float timeInterval = 1.0f;
     private bool isActive = true;
-
+    [SerializeField]
+    private Transform rotationPivot;
 
     void Update()
     {
@@ -41,32 +42,22 @@ public class Blocks : MonoBehaviour
 
         if (Time.time - lastTime >= timeInterval)
         {
-            transform.position += Vector3.down;
+            transform.position += new Vector3(0, -1, 0);
             lastTime = Time.time;
         }
 
 
         //이동후 범위를 초과 확인
-        if (!StageManager.checkBlocks(transform))
+        if (!StageManager.checkBlocks(transform) || StageManager.checkeCollision(transform))
         {
             //이동 범위를 초과했을 경우 이동 전으로 복구
             transform.position += new Vector3(0, 1, 0);
-            //새로운 블럭 생성
-            GM.isSpawning = false;
-            transform.parent = null;
-            StageManager.updtaeBlocksInfo(transform);
-            this.enabled = false;
-        }
-
-        if (StageManager.checkeCollision(transform))
-        {
-            //이동 범위를 초과했을 경우 이동 전으로 복구
-            transform.position += new Vector3(0, 1, 0);
-            //새로운 블럭 생성
-            transform.parent = null;
-            GM.isSpawning = false;
-            StageManager.updtaeBlocksInfo(transform);
-            this.enabled = false;
+    
+            GM.isSpawning = false; // 블록 재생성
+            StageManager.updtaeBlocksInfo(transform); //자식 정보 업데이트
+            transform.DetachChildren(); //부모 자식 관계 해제
+            StageManager.destroyBlocks();
+            Destroy(this.gameObject); //부모 삭제
         }
 
         StageManager.updtaeBlocksInfo(transform);
@@ -87,6 +78,8 @@ public class Blocks : MonoBehaviour
         //이동후 범위를 초과 확인
         if (!StageManager.checkBlocks(transform))
         {
+            print("범위를 나감");
+        
             if (direction == true)
                 transform.position += new Vector3(1, 0, 0);
             else
@@ -96,6 +89,7 @@ public class Blocks : MonoBehaviour
 
         if (StageManager.checkeCollision(transform))
         {
+            print("충돌 발생");
             if (direction == true)
                 transform.position += new Vector3(1, 0, 0);
             else
@@ -110,17 +104,18 @@ public class Blocks : MonoBehaviour
     //회전
     private void rotationalMove()
     {
-        transform.Rotate(0, 0, -90);
+        transform.RotateAround(rotationPivot.position, Vector3.forward, -90.0f);
+        //transform.Rotate(0, 0, -90);
         //이동후 범위를 초과 확인
         if (!StageManager.checkBlocks(transform))
         {
-            transform.Rotate(0, 0, 90);
+            transform.RotateAround(rotationPivot.position, Vector3.forward, 90.0f);
             StageManager.updtaeBlocksInfo(transform);
         }
 
         if (StageManager.checkeCollision(transform))
         {
-            transform.Rotate(0, 0, 90);
+            transform.RotateAround(rotationPivot.position, Vector3.forward, 90.0f);
             StageManager.updtaeBlocksInfo(transform);
         }
 
