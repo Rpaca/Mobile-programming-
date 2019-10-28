@@ -53,6 +53,8 @@ public class Blocks : MonoBehaviour
             transform.position += new Vector3(0, 1, 0);
             //새로운 블럭 생성
             GM.isSpawning = false;
+            transform.parent = null;
+            StageManager.updtaeBlocksInfo(transform);
             this.enabled = false;
         }
 
@@ -61,7 +63,9 @@ public class Blocks : MonoBehaviour
             //이동 범위를 초과했을 경우 이동 전으로 복구
             transform.position += new Vector3(0, 1, 0);
             //새로운 블럭 생성
+            transform.parent = null;
             GM.isSpawning = false;
+            StageManager.updtaeBlocksInfo(transform);
             this.enabled = false;
         }
 
@@ -79,15 +83,27 @@ public class Blocks : MonoBehaviour
         else
             transform.position += new Vector3(1, 0, 0);
 
-        //이동후 범위를 초과 확인
-        if (StageManager.checkBlocks(transform))
-            return;
 
-        //이동 범위를 초과했을 경우 이동 전으로 복구
-        if (direction == true)
-            transform.position += new Vector3(1, 0, 0);
-        else
-            transform.position += new Vector3(-1, 0, 0);
+        //이동후 범위를 초과 확인
+        if (!StageManager.checkBlocks(transform))
+        {
+            if (direction == true)
+                transform.position += new Vector3(1, 0, 0);
+            else
+                transform.position += new Vector3(-1, 0, 0);
+            StageManager.updtaeBlocksInfo(transform);
+        }
+
+        if (StageManager.checkeCollision(transform))
+        {
+            if (direction == true)
+                transform.position += new Vector3(1, 0, 0);
+            else
+                transform.position += new Vector3(-1, 0, 0);
+            StageManager.updtaeBlocksInfo(transform);
+        }
+
+        StageManager.updtaeBlocksInfo(transform);
     }       
 
 
@@ -96,10 +112,19 @@ public class Blocks : MonoBehaviour
     {
         transform.Rotate(0, 0, -90);
         //이동후 범위를 초과 확인
-        if (StageManager.checkBlocks(transform))
-            return;
-        //이동 범위를 초과했을 경우 이동 전으로 복구
-        transform.Rotate(0, 0, 90);
+        if (!StageManager.checkBlocks(transform))
+        {
+            transform.Rotate(0, 0, 90);
+            StageManager.updtaeBlocksInfo(transform);
+        }
+
+        if (StageManager.checkeCollision(transform))
+        {
+            transform.Rotate(0, 0, 90);
+            StageManager.updtaeBlocksInfo(transform);
+        }
+
+        StageManager.updtaeBlocksInfo(transform);
     }
 
     //스피드 업
@@ -114,6 +139,7 @@ public class Blocks : MonoBehaviour
     private void instantDrop()
     {
         timeInterval = 0;
+        StageManager.updtaeBlocksInfo(transform);
         isActive = false;
     }
 

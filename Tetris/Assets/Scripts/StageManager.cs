@@ -32,15 +32,34 @@ public class StageManager : MonoBehaviour
     //타일 삭제
     private void destroyBlocks()
     {
+        int bloksCounter = 0;
+        for (int y = 0; y < stageHeight; y++)
+        {
+            for (int x = 0; x < stageWidth; x++)
+            {
+                if (tile[x, y] != null)
+                    bloksCounter++;
+            }
+            print(bloksCounter);
+            if (bloksCounter == 10)
+            {
+                for (int x = 0; x < stageWidth; x++)
+                {
+                    Destroy(tile[x, y].gameObject, 1);
+                    tile[x, y] = null;
+                }
+            }
+            bloksCounter = 0;
+        }
     }
 
     //타일 정보 업데이트
    static  public void updtaeBlocksInfo(Transform blocks)
     {
 
-        for (int y = 0; y < 20; y++)
+        for (int y = 0; y < stageHeight; y++)
         {
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < stageWidth; x++)
             {
                 // null은 아닌데 그 정보가 지금 이동하는 블록이면 null로 취급
                 if (tile[x, y] != null)
@@ -54,19 +73,19 @@ public class StageManager : MonoBehaviour
        // null 이면 업데이트
         foreach (Transform child in blocks)
         {
-            if(blocks.name == "Block")
-                tile[(int)blocks.position.x, (int)blocks.position.y] = blocks;
+            //"if" is not called why?
+            if(child.name == "Block")
+                tile[(int)child.position.x, (int)child.position.y] = child;
         }
-        print("uptdate");
     }
 
     //블록이 다른 블록과 충돌하는지 확인(블록이 이미 있으면 true 없으면 false)
     static public bool checkeCollision(Transform blocks)
     {
-
-        for (int y = 0; y < 20; y++)
+        
+        for (int y = 0; y < stageHeight; y++)
         {
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < stageWidth; x++)
             {
                 // null은 아닌데 그 정보가 지금 이동하는 블록이면 null로 취급
                 if (tile[x, y] != null)
@@ -76,11 +95,13 @@ public class StageManager : MonoBehaviour
                 }
             }
         }
+        
 
         //블록이 이미 있는데 그게 이블록이 아니면 return true
         foreach (Transform child in blocks)
         {
-            if (blocks.name == "Block")
+            //print(tile[(int)child.position.x, (int)child.position.y]);
+            if (child.name == "Block")
                 if (tile[(int)child.position.x, (int)child.position.y] != null)
                     return true;
         }
@@ -88,8 +109,8 @@ public class StageManager : MonoBehaviour
         // null 이면 업데이트
         foreach (Transform child in blocks)
         {
-            if (blocks.name == "Block")
-                tile[(int)blocks.position.x, (int)blocks.position.y] = blocks;
+            if (child.name == "Block")
+                tile[(int)blocks.position.x, (int)blocks.position.y] = child;
         }
 
         return false;
@@ -105,6 +126,7 @@ public class StageManager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-		
-	}
+        destroyBlocks();
+
+    }
 }
