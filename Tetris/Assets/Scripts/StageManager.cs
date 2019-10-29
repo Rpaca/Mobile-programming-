@@ -8,9 +8,33 @@ public class StageManager : MonoBehaviour
     private static int stageWidth = 10;
     [SerializeField]
     private static int stageHeight = 20;
-    // 타일이 없는 경우 null
     private static Transform[,] tile = new Transform[10, 20];
+    [SerializeField]
+    private GameObject[] stageBlocks;
 
+    private void Start()
+    {
+        creatStage();
+    }
+
+    private void creatStage()
+    {
+        int stageSize = 0;
+        for (int y = 0; y < stageHeight; y++)
+        {
+            stageSize++;
+            for (int x = 0; x < stageWidth; x++)
+            {
+                var bar = stageBlocks[0];
+                stageSize++;
+                if(stageSize % 2 == 0)
+                    bar = stageBlocks[1];
+                Instantiate(bar);
+                bar.transform.position = new Vector3(x, y, 0);
+                print(stageSize % 2);
+            }
+        }
+    }
 
    static private Vector3 roundVec3(Vector3 vec)
     {
@@ -149,5 +173,14 @@ public class StageManager : MonoBehaviour
         return false;
     }
 
+
+    //블록이 생성될 공간이 있는지 확인
+    static public bool isSpawneble(Vector3 pos)
+    {
+        Vector3 v = roundVec3(pos);
+        if (tile[(int)pos.x, (int)pos.y] != null)
+            return false;
+        return true;
+    }
 
 }

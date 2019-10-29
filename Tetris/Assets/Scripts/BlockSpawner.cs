@@ -23,6 +23,12 @@ public class BlockSpawner : MonoBehaviour
 
     private void spawn()
     {
+        //블록이 스폰 가능한지 체크
+        if (!StageManager.isSpawneble(this.gameObject.transform.position))
+        {
+            UIManager.gameOver = true;
+            return;
+        }
         var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
         GameObject tempt;
         int i;
@@ -40,9 +46,12 @@ public class BlockSpawner : MonoBehaviour
     private void createNextBlock()
     {
         Destroy(nextBlocks);
-        Vector3 pos = new Vector3(20.0f, 14.5f, -1.0f);
+        Vector3 pos = new Vector3(21.0f, 15.5f, -1.0f);
         nextShape = Random.Range(0, blockPrefabs.Length);
         nextBlocks = Instantiate(blockPrefabs[nextShape], pos, Quaternion.identity);
         nextBlocks.GetComponent<Blocks>().enabled = false;
     }
+
+
+
 }

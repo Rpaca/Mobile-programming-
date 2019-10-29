@@ -9,6 +9,12 @@ public class Blocks : MonoBehaviour
     private bool isActive = true;
     [SerializeField]
     private Transform rotationPivot;
+    static public float lastspeed = 0.8f;
+
+    private void Start()
+    {
+        timeInterval = lastspeed;
+    }
 
     void Update()
     {
@@ -124,7 +130,7 @@ public class Blocks : MonoBehaviour
     private void speedUp(bool onActive)
     {
         //코드 수정 필요
-        timeInterval = 0.8f;
+        timeInterval = lastspeed; 
         if (onActive == true)
             timeInterval = 0.1f;
     }
@@ -135,6 +141,12 @@ public class Blocks : MonoBehaviour
         timeInterval = 0;
         StageManager.updtaeBlocksInfo(transform);
         isActive = false;
+    }
+
+    static public void setBlockSpeed(float speed)
+    {
+        if (lastspeed != speed)
+            lastspeed = speed;
     }
 
 }

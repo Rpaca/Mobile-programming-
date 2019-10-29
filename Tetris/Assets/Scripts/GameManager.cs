@@ -18,28 +18,28 @@ public class GameManager : MonoBehaviour {
         // Level.2
         if (Score.GetScore() > 50)
         {
-           // Blocks.setBlockSpeed(0.9f);
+            Blocks.setBlockSpeed(0.5f);
             level = 2;
         }
 
         // Level.3
         if (Score.GetScore() > 100)
         {
-            //Blocks.setBlockSpeed(0.9f);
+            Blocks.setBlockSpeed(0.4f);
             level = 3;
         }
 
         // Level.4
         if (Score.GetScore() > 150)
         {
-            //Blocks.setBlockSpeed(0.9f);
+            Blocks.setBlockSpeed(0.3f);
             level = 4;
         }
 
         // Level.5
         if (Score.GetScore() > 200)
         {
-            //Blocks.setBlockSpeed(0.9f);
+            Blocks.setBlockSpeed(0.2f);
             level = 5;
         }
     }
@@ -50,7 +50,8 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
         stageLevelUP();
 
     }

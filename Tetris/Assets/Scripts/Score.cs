@@ -21,7 +21,7 @@ public class Score : MonoBehaviour
 
     static public void addScore()
     {
-        float bonus = point * combo * 0.2f;
+        float bonus = point * combo * 0.5f;
         score += point + (int)bonus;
     }
 
