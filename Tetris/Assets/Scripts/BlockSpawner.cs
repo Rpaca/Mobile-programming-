@@ -6,8 +6,8 @@ public class BlockSpawner : MonoBehaviour
 {
 
     public GameObject[] blockPrefabs;
-  
-
+    private int nextShape = -1;
+    GameObject nextBlocks;
     // Use this for initialization
     void Start ()
     {
@@ -25,9 +25,24 @@ public class BlockSpawner : MonoBehaviour
     {
         var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
         GameObject tempt;
+        int i;
         Vector3 pos = this.gameObject.transform.position;
-        int i = Random.Range(0, blockPrefabs.Length);
+        if (nextShape == -1)
+            i = Random.Range(0, blockPrefabs.Length);
+        else
+            i = nextShape;
+
         tempt = Instantiate(blockPrefabs[i], pos, Quaternion.identity);
+        createNextBlock();
         GM.isSpawning = true;
+    }
+
+    private void createNextBlock()
+    {
+        Destroy(nextBlocks);
+        Vector3 pos = new Vector3(20.0f, 14.5f, -1.0f);
+        nextShape = Random.Range(0, blockPrefabs.Length);
+        nextBlocks = Instantiate(blockPrefabs[nextShape], pos, Quaternion.identity);
+        nextBlocks.GetComponent<Blocks>().enabled = false;
     }
 }

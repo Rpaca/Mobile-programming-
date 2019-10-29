@@ -20,7 +20,7 @@ public class StageManager : MonoBehaviour
     //블록 범위 확인
     private static bool checkBorder(Vector3 pos)
     {
-        print(Mathf.Round(pos.y));
+        //print(Mathf.Round(pos.y));
         //if ((int)pos.x < 0)
         // print((int)pos.x);
         if ((int)pos.y < 0)
@@ -51,6 +51,7 @@ public class StageManager : MonoBehaviour
     //타일 삭제
     public static void destroyBlocks()
     {
+        int score = Score.GetScore();
         int bloksCounter = 0;
         for (int y = 0; y < stageHeight; y++)
         {
@@ -67,9 +68,16 @@ public class StageManager : MonoBehaviour
                     tile[x, y] = null;
                 }
                 downBlocks(y+1);
+                Score.addScore();
+                y--;
             }
             bloksCounter = 0;
         }
+        //타일 삭제 확인 전과 후를 비교해서 ADDSOCRE가 사용되었으면 COMB++ 아니면 초기화
+        if (score == Score.GetScore())
+            Score.resetCombo();
+        else
+            Score.addCombo();
     }
 
     //타일 삭제후 한칸씩 위치 이동
@@ -81,8 +89,9 @@ public class StageManager : MonoBehaviour
             {
                 if (tile[x, y] != null)
                 {
+                    tile[x, y].gameObject.transform.position += new Vector3(0, -1, 0);
                     tile[x, y - 1] = tile[x, y];
-                    tile[x, y - 1].gameObject.transform.position += new Vector3(0, -1, 0);
+                    print(tile[x, y - 1].gameObject.transform.position);
                     tile[x, y] = null;
                 }
             }

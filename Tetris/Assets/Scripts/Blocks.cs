@@ -5,7 +5,7 @@ using UnityEngine;
 public class Blocks : MonoBehaviour
 {
     private float lastTime = 0;
-    private float timeInterval = 1.0f;
+    private float timeInterval = 0.8f;
     private bool isActive = true;
     [SerializeField]
     private Transform rotationPivot;
@@ -33,7 +33,6 @@ public class Blocks : MonoBehaviour
   
 
     }
-
 
     //자유낙하
     private void drop()
@@ -105,7 +104,6 @@ public class Blocks : MonoBehaviour
     private void rotationalMove()
     {
         transform.RotateAround(rotationPivot.position, Vector3.forward, -90.0f);
-        //transform.Rotate(0, 0, -90);
         //이동후 범위를 초과 확인
         if (!StageManager.checkBlocks(transform))
         {
@@ -125,7 +123,8 @@ public class Blocks : MonoBehaviour
     //스피드 업
     private void speedUp(bool onActive)
     {
-        timeInterval = 1.5f;
+        //코드 수정 필요
+        timeInterval = 0.8f;
         if (onActive == true)
             timeInterval = 0.1f;
     }
