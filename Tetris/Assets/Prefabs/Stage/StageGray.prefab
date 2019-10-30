@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23043667774927962}
   - component: {fileID: 65847141226175176}
   m_Layer: 0
-  m_Name: StageBlock (1)
+  m_Name: StageGray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

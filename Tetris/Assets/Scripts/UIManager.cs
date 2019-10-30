@@ -6,40 +6,30 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [SerializeField]
-    private GameObject gameOverSence;
+    private Text scoreText; // 게임 중 점수
     [SerializeField]
-    private Text scoreText;
+    private Text comboText; // 콤보
     [SerializeField]
-    private Text comboText;
+    private Text levelText; // 레벨
     [SerializeField]
-    private Text levelText;
-    static public bool gameOver =false;
-    [SerializeField]
-    private Text lastScoreText;
+    private Text lastScoreText;// 최종 점수
 
-    // Use this for initialization
-    void Start ()
+    private ScoreManager Score;
+
+    void Start()
     {
-        gameOverSence = GameObject.Find("GameOverBackround");
-        gameOverSence.SetActive(false);
+        Score = GameObject.Find("GameManager").GetComponent<ScoreManager>();
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    void Update ()
     {
-        int score = Score.GetScore();
-        int combo = Score.GetCombo();
-        int level = GameManager.getLevel();
+        scoreText.text = Score.GetScore().ToString();
+        comboText.text = Score.GetCombo().ToString();
+        levelText.text = Score.GetLevel().ToString();
+    }
 
-
-
-        comboText.text = combo.ToString();
-        scoreText.text = score.ToString();
-        levelText.text = level.ToString();
-        if (gameOver)
-        {
-            gameOverSence.SetActive(true);
-            lastScoreText.text = score.ToString();
-        }
+    public void UpdateLastScore()
+    {
+        lastScoreText.text = Score.GetScore().ToString();
     }
 }

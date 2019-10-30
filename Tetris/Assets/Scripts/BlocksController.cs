@@ -2,31 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Blocks : MonoBehaviour
-{
-    private float lastTime = 0;
-    private float timeInterval = 0.8f;
-    private bool isActive = true;
-    [SerializeField]
-    private Transform rotationPivot;
-    static public float lastspeed = 0.8f;
+public class BlocksController : MonoBehaviour
+{ 
+    private float timer = 0.0f; //타이머
+    private float timeInterval = 0.8f; //기본 블록 이동 속도
+    private float lastspeed = 0.8f; //변화한 이동 속도
 
-    private void Start()
+    StageManager Stage;
+    BlocksSpawner Spawner;
+    ScoreManager Score;
+
+    private void Awake()
     {
-        timeInterval = lastspeed;
+        Stage = GameObject.Find("GameManager").GetComponent<StageManager>();
+    }
+
+    void Start()
+    {
+        Stage = GameObject.Find("GameManager").GetComponent<StageManager>();
+        Score = GameObject.Find("GameManager").GetComponent<ScoreManager>();
+        Spawner = GameObject.Find("BlocksSpawner").GetComponent<BlocksSpawner>();
+
+        setSpeed();
+        print(lastspeed);
     }
 
     void Update()
     {
         drop();
 
-        if (isActive == false)
-            return;
-
         if (Input.GetKeyDown(KeyCode.LeftArrow))
             horizontalMove(true);
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
             horizontalMove(false);
+
         if (Input.GetKeyDown(KeyCode.UpArrow))
             rotationalMove();
         if (Input.GetKey(KeyCode.DownArrow))
@@ -36,36 +45,43 @@ public class Blocks : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             instantDrop();
 
-  
-
     }
+
+    //레벨에 따라 속도 변경
+    private void setSpeed()
+    {
+        lastspeed -= Score.GetLevel() * 0.15f;
+        if (lastspeed >= 0.2)
+            timeInterval = lastspeed;
+        else
+            timeInterval = 0.2f;
+    }
+
 
     //자유낙하
     private void drop()
     {
-        var GM = GameObject.FindGameObjectWithTag("gameManager").GetComponent<GameManager>();
+        timer += Time.deltaTime;
 
-        if (Time.time - lastTime >= timeInterval)
+        if (timer >= timeInterval)
         {
             transform.position += new Vector3(0, -1, 0);
-            lastTime = Time.time;
+            timer = 0;
         }
 
-
         //이동후 범위를 초과 확인
-        if (!StageManager.checkBlocks(transform) || StageManager.checkeCollision(transform))
+        if (!Stage.IsValidTranslate(this.transform))
         {
             //이동 범위를 초과했을 경우 이동 전으로 복구
             transform.position += new Vector3(0, 1, 0);
-    
-            GM.isSpawning = false; // 블록 재생성
-            StageManager.updtaeBlocksInfo(transform); //자식 정보 업데이트
+            Stage.UpdtaeBlocksInfo(transform); //자식 정보 업데이트
+            Stage.DestroyBlocks(); // 라인 삭제 확인
+            Spawner.TurnOnSpawner();//Spawner 재활성화
             transform.DetachChildren(); //부모 자식 관계 해제
-            StageManager.destroyBlocks();
             Destroy(this.gameObject); //부모 삭제
         }
 
-        StageManager.updtaeBlocksInfo(transform);
+        Stage.UpdtaeBlocksInfo(transform);
 
     }
 
@@ -81,7 +97,7 @@ public class Blocks : MonoBehaviour
 
 
         //이동후 범위를 초과 확인
-        if (!StageManager.checkBlocks(transform))
+        if (!Stage.IsValidTranslate(this.transform))
         {
             print("범위를 나감");
         
@@ -89,47 +105,32 @@ public class Blocks : MonoBehaviour
                 transform.position += new Vector3(1, 0, 0);
             else
                 transform.position += new Vector3(-1, 0, 0);
-            StageManager.updtaeBlocksInfo(transform);
+            Stage.UpdtaeBlocksInfo(transform);
         }
 
-        if (StageManager.checkeCollision(transform))
-        {
-            print("충돌 발생");
-            if (direction == true)
-                transform.position += new Vector3(1, 0, 0);
-            else
-                transform.position += new Vector3(-1, 0, 0);
-            StageManager.updtaeBlocksInfo(transform);
-        }
-
-        StageManager.updtaeBlocksInfo(transform);
+       Stage.UpdtaeBlocksInfo(transform);
     }       
 
 
     //회전
     private void rotationalMove()
     {
+        Transform rotationPivot; // 회전 중심축
+        rotationPivot = transform.Find("Pivot");
+
         transform.RotateAround(rotationPivot.position, Vector3.forward, -90.0f);
         //이동후 범위를 초과 확인
-        if (!StageManager.checkBlocks(transform))
+        if (!Stage.IsValidTranslate(this.transform))
         {
             transform.RotateAround(rotationPivot.position, Vector3.forward, 90.0f);
-            StageManager.updtaeBlocksInfo(transform);
+           Stage.UpdtaeBlocksInfo(transform);
         }
-
-        if (StageManager.checkeCollision(transform))
-        {
-            transform.RotateAround(rotationPivot.position, Vector3.forward, 90.0f);
-            StageManager.updtaeBlocksInfo(transform);
-        }
-
-        StageManager.updtaeBlocksInfo(transform);
+        Stage.UpdtaeBlocksInfo(transform);
     }
 
-    //스피드 업
+    //낙하 속도 증가
     private void speedUp(bool onActive)
     {
-        //코드 수정 필요
         timeInterval = lastspeed; 
         if (onActive == true)
             timeInterval = 0.1f;
@@ -139,14 +140,8 @@ public class Blocks : MonoBehaviour
     private void instantDrop()
     {
         timeInterval = 0;
-        StageManager.updtaeBlocksInfo(transform);
-        isActive = false;
     }
 
-    static public void setBlockSpeed(float speed)
-    {
-        if (lastspeed != speed)
-            lastspeed = speed;
-    }
+
 
 }
