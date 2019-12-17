@@ -63,10 +63,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\GridManager.cs" />
+    <Compile Include="Assets\Script\Life.cs" />
     <Compile Include="Assets\Script\PlayerController.cs" />
     <Compile Include="Assets\Script\PlayerScript.cs" />
     <Compile Include="Assets\Script\PlayerShooting.cs" />
+    <Compile Include="Assets\Script\ScoreManager.cs" />
+    <Compile Include="Assets\Script\UImanager.cs" />
     <Compile Include="Assets\Script\ZombieController.cs" />
+    <Compile Include="Assets\Script\ZombieSpawner.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/Administrator/Documents/github/Mobile-programming-/PathFinding/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

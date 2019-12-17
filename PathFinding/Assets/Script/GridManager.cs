@@ -31,6 +31,7 @@ public class GridManager : MonoBehaviour
         world[pos2Cell(pos)] = TileType.Wall;
     }
 
+    //40, 30
     public void BuildWorld(int n_rows, int n_cols)
     {
         int max_tiles = n_rows * n_cols;
@@ -49,8 +50,8 @@ public class GridManager : MonoBehaviour
             world[i] = TileType.Plain;
             if (i == player_cell) continue; // we assign the player's location as a plain grid cell.
 
-            /*
-            if (Random.Range(0.0f, 1.0f) < 0.25) // wall is created with a probability of 25 %.
+
+            if (Random.Range(0.0f, 1.0f) < 0.03) // wall is created with a probability of 25 %.
             {
                 world[i] = TileType.Wall;
                 var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -58,7 +59,18 @@ public class GridManager : MonoBehaviour
                 wall.tag = "Wall";
                 wall.transform.position = locateToCenter(cell2Pos(i));
             }
-            */
+
+        }
+
+        for (int i = 0; i < 36; i++)
+        {
+            CreatWall(new Vector3(3.0f + i, 0.0f, 5.0f));
+            CreatWall(new Vector3(3.0f + i, 0.0f, 35.0f));
+        }
+        for (int i = 0; i < 30; i++)
+        {
+            CreatWall(new Vector3(3.0f, 0.0f, 5.0f+i));
+            CreatWall(new Vector3(38.0f, 0.0f, 5.0f+i));
         }
 
         // 디버깅용
@@ -90,7 +102,6 @@ public class GridManager : MonoBehaviour
 
     public Vector3 pos2center(Vector3 pos)
     {
-
         return locateToCenter(cell2Pos(pos2Cell(pos)));
     }
 
@@ -188,7 +199,7 @@ public class GridManager : MonoBehaviour
 
     int[] findShortestPath(int from, int to, TileType[] world)
     {
-        print("BFS");
+        //print("BFS");
         int max_tiles = n_x * n_z;
 
         if (from < 0 || from >= max_tiles || to < 0 || to >= max_tiles) return null;
@@ -315,5 +326,15 @@ public class GridManager : MonoBehaviour
                 yield return null;
             }
         }    
+    }
+
+    // 블럭 생성
+    public void CreatWall(Vector3 position)
+    {
+        var wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        wall.GetComponent<MeshRenderer>().material.color = Color.yellow;
+        wall.tag = "Wall";
+        wall.transform.position = pos2center(position);
+        SetAsWall(wall.transform.position);
     }
 }

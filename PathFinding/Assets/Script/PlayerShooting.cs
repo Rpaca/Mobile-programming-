@@ -4,87 +4,67 @@ using UnityEngine;
 
 public class PlayerShooting : MonoBehaviour
 {
-    public int damagePerShot = 20;                  // The damage inflicted by each bullet.
-    public float timeBetweenBullets = 0.15f;        // The time between each shot.
-    public float range = 100f;                      // The distance the gun can fire.
+    [SerializeField]
+    private Transform fireTransform;
+    [SerializeField]
+    private AudioSource gunSound;
+    private int damage = 20;
+    private float coolTime = 0.2f;
+    private float fireDistance = 10.0f;
 
-    float timer;                                    // A timer to determine when to fire.
-    Ray shootRay;                                   // A ray from the gun end forwards.
-    RaycastHit shootHit;                            // A raycast hit to get information about what was hit.
-    int shootableMask;                              // A layer mask so the raycast only hits things on the shootable layer.
-    LineRenderer gunLine;                           // Reference to the line renderer.
-    float effectsDisplayTime = 0.2f;                // The proportion of the timeBetweenBullets that the effects will display for.
 
-    void Awake()
+    float timer;                                    
+    Ray shootRay;                                  
+    RaycastHit hitPoint;                           
+
+    public LineRenderer bulletLineRenderer;                       
+    float effectsDisplayTime = 0.2f;               
+
+    void Start()
     {
-        // Create a layer mask for the Shootable layer.
-        shootableMask = LayerMask.GetMask("Shootable");
-
-        // Set up the references.
-        gunLine = GetComponent<LineRenderer>();
+        bulletLineRenderer.positionCount = 2;
+        bulletLineRenderer.enabled = false;
     }
 
     void Update()
     {
-        // Add the time since Update was last called to the timer.
         timer += Time.deltaTime;
 
-        // If the Fire1 button is being press and it's time to fire...
-        if (Input.GetKeyDown(KeyCode.Space)) //&& timer >= timeBetweenBullets)
-        {
+        if (Input.GetMouseButtonDown(0) && timer >= coolTime)
             Shoot();
-        }
 
-        // If the timer has exceeded the proportion of timeBetweenBullets that the effects should be displayed for...
-        if (timer >= timeBetweenBullets * effectsDisplayTime)
-        {
-            DisableEffects();
-        }
+        if (timer >= coolTime * effectsDisplayTime)
+            bulletLineRenderer.enabled = false;
     }
 
-    public void DisableEffects()
-    {
-        // Disable the line renderer and the light.
-       // gunLine.enabled = false;
-        //gunLight.enabled = false;
-    }
+
 
     void Shoot()
     {
-        print("shot!");
-        // Reset the timer.
-        timer = 0f;
-
-
-        // Enable the line renderer and set it's first position to be the end of the gun.
-        //gunLine.enabled = true;
-        //gunLine.SetPosition(0, transform.position);
-
-        // Set the shootRay so that it starts at the end of the gun and points forward from the barrel.
+        timer = 0.0f;
+        gunSound.Play();
+     
         shootRay.origin = transform.position;
         shootRay.direction = transform.forward;
 
-        // Perform the raycast against gameobjects on the shootable layer and if it hits something...
-        if (Physics.Raycast(shootRay, out shootHit, range))
+        bulletLineRenderer.enabled = true;
+        bulletLineRenderer.SetPosition(0, fireTransform.position);
+
+        if (Physics.Raycast(shootRay, out hitPoint, fireDistance))
         {
-           // Try and find an EnemyHealth script on the gameobject hit.
-           // EnemyHealth enemyHealth = shootHit.collider.GetComponent<EnemyHealth>();
+            Life Life = hitPoint.collider.GetComponent<Life>();
+            if (Life != null)
+            {
+                Life.getDamage(damage);
+            }
 
-            // If the EnemyHealth component exist...
-            //if (enemyHealth != null)
-            //{
-                // ... the enemy should take damage.
-               // enemyHealth.TakeDamage(damagePerShot, shootHit.point);
-           // }
-
-            // Set the second position of the line renderer to the point the raycast hit.
-            //gunLine.SetPosition(1, shootHit.point);
+            bulletLineRenderer.SetPosition(1, hitPoint.point);
         }
-        // If the raycast didn't hit anything on the shootable layer...
+
         else
         {
-            // ... set the second position of the line renderer to the fullest extent of the gun's range.
-            gunLine.SetPosition(1, shootRay.origin + shootRay.direction * range);
+           
+            bulletLineRenderer.SetPosition(1, shootRay.origin + shootRay.direction * fireDistance);
         }
     }
 }
